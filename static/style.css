@@ -1,0 +1,28 @@
+body {
+    background: linear-gradient(135deg, #ffffff, #bebebe) !important;
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 100vh;
+}
+
+h1 {
+    color: #000000 !important;
+    font-weight: bold;
+}
+
+.card {
+    border: none;
+    border-radius: 20px !important;
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.table th {
+    background-color: #2a5298;
+    color: white;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #f2f6ff;
+}
