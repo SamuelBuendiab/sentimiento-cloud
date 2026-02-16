@@ -12,7 +12,7 @@ import os
 import re
 
 nltk.download('vader_lexicon')
-# Crear carpetas porque sino error
+# Crear carpetas
 for folder in ["uploads", "static"]:
     os.makedirs(folder, exist_ok=True)
 
@@ -60,13 +60,29 @@ def index():
         filepath = os.path.join(UPLOAD_FOLDER, file.filename)
         file.save(filepath)
 
-        df = pd.read_csv(filepath)
+        df = pd.read_csv(filepath, header=None)
+        df.columns = ["Frace"]
 
-        df["sentence"] = df["sentence"].apply(limpiar_texto)
 
-        df["compound"] = df["sentence"].apply(
+        # Validar que el CSV no esté vacío
+        if df.empty:
+            return "El archivo CSV está vacío"
+
+        # Tomar automáticamente la primera columna como texto
+        columna_texto = "Frace"
+
+
+        # Convertir a string por seguridad
+        df[columna_texto] = df[columna_texto].astype(str)
+
+        # Limpiar texto
+        df[columna_texto] = df[columna_texto].apply(limpiar_texto)
+
+        # Análisis de sentimiento
+        df["compound"] = df[columna_texto].apply(
             lambda x: sid.polarity_scores(x)["compound"]
         )
+
 
         df["Sentimiento"] = df["compound"].apply(clasificar_sentimiento)
 
@@ -112,9 +128,8 @@ def index():
 
     return render_template("index.html")
 
-
+#if __name__ == "__main__": app.run(debug=True)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
-
