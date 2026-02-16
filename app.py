@@ -12,6 +12,10 @@ import os
 import re
 
 nltk.download('vader_lexicon')
+# Crear carpetas porque sino error
+for folder in ["uploads", "static"]:
+    os.makedirs(folder, exist_ok=True)
+
 # Limpiar carpeta uploads y static al iniciar servidor
 for folder in ["uploads", "static"]:
     for file in os.listdir(folder):
@@ -113,3 +117,4 @@ def index():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
+
