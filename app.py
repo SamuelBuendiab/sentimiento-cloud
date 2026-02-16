@@ -96,16 +96,51 @@ def index():
         categorias = ["Positivo", "Negativo", "Neutral"]
         conteo = df["Sentimiento"].value_counts()
         valores = [conteo.get(cat, 0) for cat in categorias]
+
+        total = sum(valores)
+
+        # Detectar categoría dominante
+        max_valor = max(valores)
+        indice_max = valores.index(max_valor)
+
         colores = ["green", "red", "blue"]
 
+        # Resaltar la barra dominante
+        colores_resaltados = []
+        for i, color in enumerate(colores):
+            if i == indice_max:
+                colores_resaltados.append("gold")  # color especial
+            else:
+                colores_resaltados.append(color)
+
         plt.figure()
-        plt.bar(categorias, valores, color=colores)
+
+        bars = plt.bar(categorias, valores, color=colores_resaltados)
+
         plt.title("Análisis de Sentimientos")
+
+        # Ajuste dinámico del eje Y
+        margen = max_valor * 0.1
+        plt.ylim(0, max_valor + margen)
+
+        # Agregar valores y porcentajes encima
+        for bar in bars:
+            altura = bar.get_height()
+            porcentaje = (altura / total) * 100 if total > 0 else 0
+            plt.text(
+                bar.get_x() + bar.get_width() / 2,
+                altura,
+                f"{int(altura)}\n({porcentaje:.1f}%)",
+                ha='center',
+                va='bottom'
+            )
+
         plt.tight_layout()
 
         graph_path = "static/grafico.png"
         if os.path.exists(graph_path):
             os.remove(graph_path)
+
         plt.savefig(graph_path)
         plt.close()
 
@@ -133,3 +168,4 @@ def index():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
+
